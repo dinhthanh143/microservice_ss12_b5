@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: order-shipping-service
+
+# Cấu hình Resilience4j Retry
+resilience4j:
+  retry:
+    instances:
+      ghtkShippingRetry:
+        max-attempts: 3
+        wait-duration: 2s
+        enable-exponential-backoff: false
+        retry-exceptions:
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.ResourceAccessException
+          - java.net.SocketTimeoutException
+        ignore-exceptions:
+          - java.lang.IllegalArgumentException
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,retryevents,circuitbreakerevents
+  endpoint:
+    health:
+      show-details: always
